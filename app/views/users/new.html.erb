@@ -1,2 +1,10 @@
-<h1>Users#new</h1>
-<p>Find me in app/views/users/new.html.erb</p>
+<%= content_for :title do %>Users<%end%>
+<main >
+  <div>
+    <h1>New user</h1>
+
+    <%= render 'form' %>
+
+    <%= link_to 'back', :back %>
+  </div>
+</main>
