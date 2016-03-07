@@ -1,0 +1,15 @@
+
+  <div id="map" style="height:600px; width:100%"></div>
+  <script>
+    var map;
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: 1.360270, lng:  103.815959},
+        zoom: 12
+      });
+      var trafficLayer = new google.maps.TrafficLayer();
+      trafficLayer.setMap(map);
+    }
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?AIzaSyC62LADU--Wasiae3_LGpkvaVIUlYfJ1EU&callback=initMap"
+  async defer></script>
