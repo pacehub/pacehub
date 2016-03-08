@@ -1,11 +1,12 @@
-<% provide(:title, 'Sign up') %>
+<% provide(:title, 'Login') %>
 <div class="container">
 
-  <h1 class="title">Sign up</h1>
+  <h1 class="title">Log in</h1>
 
   <div class="row form-group">
     <div class="col-sm-6 col-sm-offset-3">
       <%= render 'form' %>
     </div>
   </div>
+  <p>New user? <%= link_to "Sign up now!", signup_path %></p>
 </div>

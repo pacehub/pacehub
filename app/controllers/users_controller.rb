@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  include SessionsHelper
   before_action :set_user, only: [:show, :edit]
 
   def index
@@ -14,6 +15,7 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
+      log_in @user
       redirect_to user_path(@user), notice: 'Thank you for signing up!'
     else
       render 'new'
