@@ -1,7 +1,13 @@
 <nav class="navbar" role="navigation">
   <div class="container-fluid">
     <p id="notice"><%= notice %></p>
-    <%= link_to "Home", root_path %>
-    <%= link_to "Sign Up", new_user_path %>
+    <div class="row">
+      <div class="col-sm-1 col-sm-offset-10">
+        <%= link_to "Home", root_path %>
+      </div>
+      <div class="col-sm-1">
+        <%= link_to "Sign Up", signup_path %>
+      </div>
+    </div>
   </div>
 </nav>

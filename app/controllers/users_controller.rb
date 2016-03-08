@@ -31,7 +31,7 @@ class UsersController < ApplicationController
 
   # whitelist parameters
   def user_params
-    params.require(:user).permit(:id, :email, :password, :name, :first_name, :last_name, :image_url, :mobile_number,
+    params.require(:user).permit(:id, :email, :password, :password_confirmation, :name, :first_name, :last_name, :mobile_number,
                                  :active, :timezone, :login_count, :last_login_at, role_ids: [])
   end
 end

@@ -1,4 +1,4 @@
-/*
+applicaio/*
  * This is a manifest file that'll be compiled into application.css, which will include all the files
  * listed below.
  *
@@ -16,3 +16,44 @@
 
 @import "bootstrap-sprockets";
 @import "bootstrap";
+
+$gray-medium-light: #eaeaea;
+
+@mixin box_sizing {
+  -moz-box-sizing:    border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing:         border-box;
+}
+
+.debug_dump {
+  margin-top: 0px;
+  padding: 0px;
+  clear: both;
+  float: left;
+  width: 100%;
+  @include box_sizing;
+}
+
+.header {
+  height: 30px
+}
+
+label {
+  display: block;
+  position: relative;
+  margin-bottom: 5px;
+}
+
+input {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.btn {
+  width:100%;
+  margin-top: 10px;
+}
+
+#error_explanation {
+  color: red;
+}
