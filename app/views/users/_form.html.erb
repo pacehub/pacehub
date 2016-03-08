@@ -1,15 +1,23 @@
-<%= simple_form_for(@user) do |f| %>
-  <%= f.error_notification %>
+<%= form_for(@user) do |f| %>
+  <% if @user.errors.any? %>
+    <div id="error_explanation">
+      <% @user.errors.full_messages.each do |msg| %>
+        <%= msg %>
+      <% end %>
+    </div>
+  <% end %>
 
-  <div class="form-inputs">
-    <%= f.input :first_name %>
-    <%= f.input :last_name %>
-    <%= f.input :email %>
-    <%= f.input :password %>
-    <%= f.input :mobile_number %>
-  </div>
+  <%= f.label :first_name %>
+  <%= f.text_field :first_name %>
 
-  <div class="form-actions">
-    <%= f.button :submit %>
-  </div>
+  <%= f.label :last_name %>
+  <%= f.text_field :last_name %>
+
+  <%= f.label :email %>
+  <%= f.email_field :email %>
+
+  <%= f.label :password %>
+  <%= f.password_field :password %>
+
+  <%= f.submit 'Create my account', class: 'btn btn-primary' %>
 <% end %>
