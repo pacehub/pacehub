@@ -1,6 +1,4 @@
 class Place < ActiveRecord::Base
   belongs_to :user
-  def initialize
-    @place = Place.new(user_id: @user.id)
-  end
+  validates_presence_of :latitude, :longitude, :address
 end
