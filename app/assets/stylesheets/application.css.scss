@@ -1,4 +1,4 @@
-applicaio/*
+/*
  * This is a manifest file that'll be compiled into application.css, which will include all the files
  * listed below.
  *
@@ -9,9 +9,6 @@ applicaio/*
  * compiled file so the styles you add here take precedence over styles defined in any styles
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
- *
- *= require_tree .
- *= require_self
  */
 
 @import "bootstrap-sprockets";
@@ -56,4 +53,22 @@ input {
 
 #error_explanation {
   color: red;
+}
+
+.title {
+  text-align: center;
+}
+
+.checkbox {
+  margin-top: -10px;
+  margin-bottom: 10px;
+  span {
+    margin-left: 20px;
+    font-weight: normal;
+  }
+}
+
+#session_remember_me {
+  width: auto;
+  margin-left: 0;
 }
