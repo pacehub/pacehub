@@ -3,7 +3,6 @@ class PlacesController < ApplicationController
 
   def index
     @places = Place.where(user_id: current_user.id)
-    gon.places = @places
   end
 
   def show
