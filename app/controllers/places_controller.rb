@@ -25,6 +25,6 @@ class PlacesController < ApplicationController
   end
   # whitelist parameters
   def place_params
-    params.require(:place).permit(:id, :user_id, :latitude, :longitude)
+    params.require(:place).permit(:id, :user_id, :latitude, :longitude, :address)
   end
 end

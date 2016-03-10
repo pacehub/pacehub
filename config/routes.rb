@@ -13,6 +13,10 @@ Rails.application.routes.draw do
 
   get 'places' => 'places#index'
 
+  scope :api, module: "api/v1", defaults: {format: :json} do
+    post 'add_places' => 'places#create'
+  end
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
