@@ -91,20 +91,21 @@ function initMap() {
   });
 
   $("#add_place").click(function (e) {
-    if (address) {
-      e.preventDefault();
-      $.ajax({
-        type: "POST",
-        contentType: "application/json; charset=utf-8",
-        url: "/api/add_places",
-        data: JSON.stringify({
-          address: address
-        }),
-        dataType: "json",
-        success: function (result) {
-          console.log('successfully added')
-        }
-      });
-    }
+    console.log("WIP")
+    // if (address) {
+    //   e.preventDefault();
+    //   $.ajax({
+    //     type: "POST",
+    //     contentType: "application/json; charset=utf-8",
+    //     url: "/api/add_places",
+    //     data: JSON.stringify({
+    //       address: address
+    //     }),
+    //     dataType: "json",
+    //     success: function (result) {
+    //       console.log('successfully added')
+    //     }
+    //   });
+    // }
   });
 }
