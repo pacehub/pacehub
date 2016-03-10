@@ -3,11 +3,19 @@ Rails.application.routes.draw do
   get 'sessions/new'
 
   root 'main#index'
+
   get 'signup' => 'users#new'
   get 'login' => 'sessions#new'
   post 'login' => 'sessions#create'
   delete 'logout' => 'sessions#destroy'
+
   resources :users
+
+  get 'places' => 'places#index'
+
+  scope :api, module: "api/v1", defaults: {format: :json} do
+    post 'add_places' => 'places#create'
+  end
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

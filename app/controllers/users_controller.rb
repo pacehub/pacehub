@@ -1,5 +1,4 @@
 class UsersController < ApplicationController
-  include SessionsHelper
   before_action :set_user, only: [:show, :edit]
 
   def index
@@ -28,7 +27,7 @@ class UsersController < ApplicationController
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_user
-    @user = User.find(params[:id])
+    @user = current_user
   end
 
   # whitelist parameters
