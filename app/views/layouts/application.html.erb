@@ -18,7 +18,7 @@
 
 
     <div class="container-fluid">
-      <div class="center jumbotron">
+      <div class="row center jumbotron">
         <% flash.each do |message_type, message| %>
           <div class="alert alert-<%= message_type %> col-sm-4 col-sm-offset-4"><%= message %></div>
         <% end %>
