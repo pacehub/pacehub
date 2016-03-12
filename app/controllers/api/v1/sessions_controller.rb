@@ -1,5 +1,5 @@
 module Api::V1
-  class SessionsController < ::ApiController
+  class SessionsController < ApiController
     
   end
 end
