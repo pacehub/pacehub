@@ -4,12 +4,20 @@
     <div class="row">
       <ul>
         <% (@places || []).each_with_index do |place, index| %>
-          <li class="col-sm-2">
-            <%= place.address %>
-            <%= link_to "delete", place_path(place.id), :method => :delete %>
-          </li>
+          <div class="card">
+            <div class="card-block">
+              <h4 class="card-title">
+                <%= place.name %>
+              </h4>
+              <p class="card-text">
+                <%= place.address %>
+              </p>
+              <%= link_to "delete", place_path(place.id), :method => :delete %>
+            </div>
+          </div>
         <% end %>
       </ul>
     </div>
   </div>
 </div>
+

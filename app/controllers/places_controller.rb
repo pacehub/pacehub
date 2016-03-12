@@ -22,12 +22,12 @@ class PlacesController < ApplicationController
   end
 
   private
-  # Use callbacks to share common setup or constraints between actions.
+  # Use callbacks to share common setup or constraints between actions
   def set_place
     @place = Place.find(params[:id])
   end
   # whitelist parameters
   def place_params
-    params.require(:place).permit(:id, :user_id, :latitude, :longitude, :address)
+    params.require(:place).permit(:id, :user_id, :latitude, :longitude, :address, :name)
   end
 end

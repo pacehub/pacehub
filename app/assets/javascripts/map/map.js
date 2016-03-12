@@ -47,9 +47,11 @@ function initMap() {
   });
 
   autocomplete.addListener('place_changed', function() {
+    var address = [];
     infoWindow.close(); 
     marker.setVisible(false);
     place = autocomplete.getPlace();
+
     if (!place.geometry) {
       window.alert("Autocomplete's returned place contains no geometry");
       return;
@@ -74,19 +76,20 @@ function initMap() {
     map.setCenter(place.geometry.location);
     marker.setVisible(true);
 
-    if (place.address_components) {
-      location = {
-        address: (place.address_components[0] && place.address_components[0].long_name || ''),
-        area: [
-          (place.address_components[1] && place.address_components[1].long_name || ''),
-          (place.address_components[2] && place.address_components[2].short_name || '')
-        ].join(' '),
-        latitude: place.geometry.location.lat(),
-        longitude: place.geometry.location.lng()
+    _.each(place.address_components, function (component) {
+      if (component['types'][0] !== 'locality') {
+        address = address.concat(component.long_name);
       }
+    });
+
+    location = {
+      address: address.join(' '),
+      name: place.name,
+      latitude: place.geometry.location.lat(),
+      longitude: place.geometry.location.lng()
     }
 
-    infoWindow.setContent('<div><strong>' + location['address'] + '</strong><br>' + location['area']);
+    infoWindow.setContent('<div><strong>' + location['name'] + '</strong><br>' + location['address'] + '</div>');
     infoWindow.open(map, marker);
   });
 
@@ -100,6 +103,7 @@ function initMap() {
         url: "/api/add_places",
         data: JSON.stringify({
           address: location['address'],
+          name: location['name'],
           latitude: location['latitude'],
           longitude: location['longitude']
         }),
