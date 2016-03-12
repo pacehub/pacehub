@@ -1,0 +1,22 @@
+<div class="container-fluid">
+  <div class="row">
+    <h1>My Places</h1>
+    <div class="row">
+      <ul>
+        <% (@users_places || []).each_with_index do |my_place, index| %>
+          <div class="card">
+            <div class="card-block">
+              <h4 class="card-title">
+                <%= my_place.name %>
+              </h4>
+              <p class="card-text">
+                <%= my_place.address %>
+              </p>
+              <%= link_to "delete", users_place_path(my_place.id), :method => :delete %>
+            </div>
+          </div>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</div>
