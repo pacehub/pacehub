@@ -14,11 +14,12 @@ module Api::V1
     end
 
     def create
-      @place = Place.new(place_params)
+      @place = current_user.places.create(place_params)
       if @place.save
-        render_result(HTTP_CODE_OK, "Place added successfully")
+        render json: @place
       else
         render json: @place.errors.messages, :status => HTTP_CODE_BAD_REQUEST
+        render html: @place.errors.messages, :status => HTTP_CODE_BAD_REQUEST
       end
     end
 

@@ -1,5 +1,5 @@
 class PlacesController < ApplicationController
-  before_action :set_place, only: [:show, :delete]
+  before_action :set_place, only: [:show, :destroy]
 
   def index
     @places = Place.where(user_id: current_user.id)
@@ -15,7 +15,10 @@ class PlacesController < ApplicationController
     @place = Place.new(place_params)
   end
 
-  def delete
+  def destroy
+    @place.destroy
+    flash[:success] = 'Successfully removed place'
+    redirect_to places_path
   end
 
   private
