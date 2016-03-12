@@ -4,7 +4,7 @@ function initMap() {
       sgCenter = { lat: 1.360270, lng: 103.815959 },
       my_places = gon.my_places,
       place,
-      address = '';;
+      location = {};
 
 
   // Location description
@@ -20,11 +20,7 @@ function initMap() {
 
   // Add markers for all saved locations
   _.each(my_places, function (my_place) {
-    my_place = new google.maps.Marker({
-      position: { lat: my_place['latitude'], lng: my_place['longitude'] },
-      map: map,
-      title: my_place['address']
-    });
+    addMarker(my_place);
   });
 
   // Traffic layer over map
@@ -51,9 +47,11 @@ function initMap() {
   });
 
   autocomplete.addListener('place_changed', function() {
-    infoWindow.close();
+    var address = [];
+    infoWindow.close(); 
     marker.setVisible(false);
     place = autocomplete.getPlace();
+
     if (!place.geometry) {
       window.alert("Autocomplete's returned place contains no geometry");
       return;
@@ -78,34 +76,50 @@ function initMap() {
     map.setCenter(place.geometry.location);
     marker.setVisible(true);
 
-    if (place.address_components) {
-      address = [
-        (place.address_components[0] && place.address_components[0].short_name || ''),
-        (place.address_components[1] && place.address_components[1].short_name || ''),
-        (place.address_components[2] && place.address_components[2].short_name || '')
-      ].join(' ');
+    _.each(place.address_components, function (component) {
+      if (component['types'][0] !== 'locality') {
+        address = address.concat(component.long_name);
+      }
+    });
+
+    location = {
+      address: address.join(' '),
+      name: place.name,
+      latitude: place.geometry.location.lat(),
+      longitude: place.geometry.location.lng()
     }
 
-    infoWindow.setContent('<div><strong>' + place.name + '</strong><br>' + address );
+    infoWindow.setContent('<div><strong>' + location['name'] + '</strong><br>' + location['address'] + '</div>');
     infoWindow.open(map, marker);
   });
 
   $("#add_place").click(function (e) {
-    console.log("WIP")
-    // if (address) {
-    //   e.preventDefault();
-    //   $.ajax({
-    //     type: "POST",
-    //     contentType: "application/json; charset=utf-8",
-    //     url: "/api/add_places",
-    //     data: JSON.stringify({
-    //       address: address
-    //     }),
-    //     dataType: "json",
-    //     success: function (result) {
-    //       console.log('successfully added')
-    //     }
-    //   });
-    // }
+    place = {};
+    if (!_.isEmpty(location)) {
+      e.preventDefault();
+      $.ajax({
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        url: "/api/add_places",
+        data: JSON.stringify({
+          address: location['address'],
+          name: location['name'],
+          latitude: location['latitude'],
+          longitude: location['longitude']
+        }),
+        dataType: "json",
+        success: function (result) {
+          addMarker(result);
+        }
+      });
+    }
   });
+
+  function addMarker(place) {
+    new google.maps.Marker({
+      position: { lat: place['latitude'], lng: place['longitude'] },
+      map: map,
+      title: place['address']
+    });
+  };
 }

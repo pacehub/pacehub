@@ -11,9 +11,9 @@ Rails.application.routes.draw do
 
   resources :users
 
-  get 'places' => 'places#index'
+  resources :places
 
-  scope :api, module: "api/v1", defaults: {format: :json} do
+  scope :api, module: "api/v1", defaults: { format: :json } do
     post 'add_places' => 'places#create'
   end
 

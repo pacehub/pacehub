@@ -15,14 +15,18 @@
       </nav>
     </header>
 
-
-
     <div class="container-fluid">
       <div class="row center jumbotron">
-        <% flash.each do |message_type, message| %>
-          <div class="alert alert-<%= message_type %> col-sm-4 col-sm-offset-4"><%= message %></div>
+        <% if flash.present? %>
+          <div class="row">
+            <% flash.each do |message_type, message| %>
+              <div class="alert alert-<%= message_type %> col-sm-4 col-sm-offset-4"><%= message %></div>
+            <% end %>
+          </div>
         <% end %>
-        <%= yield %>
+        <div class="row center">
+          <%= yield %>
+        </div>
       </div>
     </div>
 

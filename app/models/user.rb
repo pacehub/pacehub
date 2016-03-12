@@ -11,7 +11,8 @@ class User < ActiveRecord::Base
 
   has_secure_password
 
-  has_many :places
+  has_many :users_places
+  has_many :places, :through => :users_places
 
   def create_name
     self.name = "#{self.first_name} #{self.last_name}"

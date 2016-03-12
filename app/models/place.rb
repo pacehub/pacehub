@@ -1,4 +1,6 @@
 class Place < ActiveRecord::Base
-  belongs_to :user
-  validates_presence_of :latitude, :longitude, :address
+  has_many :users_places
+  has_many :users, :through => :users_places
+
+  validates_presence_of :latitude, :longitude, :address, :name
 end
