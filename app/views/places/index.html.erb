@@ -2,21 +2,19 @@
   <div class="row">
     <h1>My Places</h1>
     <div class="row">
-      <ul>
-        <% (@places || []).each_with_index do |place, index| %>
-          <div class="card">
-            <div class="card-block">
-              <h4 class="card-title">
-                <%= place.name %>
-              </h4>
-              <p class="card-text">
-                <%= place.address %>
-              </p>
-              <%= link_to "delete", place_path(place.id), :method => :delete %>
-            </div>
+      <% (@places || []).each_with_index do |place, index| %>
+        <div class="card col-sm-2">
+          <div class="card-block">
+            <h4 class="card-title">
+              <%= place.name %>
+            </h4>
+            <p class="card-text">
+              <%= place.address %>
+            </p>
+            <%= link_to "delete", place_path(place.id), :method => :delete %>
           </div>
-        <% end %>
-      </ul>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>

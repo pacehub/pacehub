@@ -1,22 +1,20 @@
 <div class="container-fluid">
-  <div class="row">
+  <div class="row cards col-sm-10 col-sm-offset-1">
     <h1>My Places</h1>
-    <div class="row">
-      <ul>
-        <% (@users_places || []).each_with_index do |my_place, index| %>
-          <div class="card">
-            <div class="card-block">
-              <h4 class="card-title">
-                <%= my_place.name %>
-              </h4>
-              <p class="card-text">
-                <%= my_place.address %>
-              </p>
-              <%= link_to "delete", users_place_path(my_place.id), :method => :delete %>
-            </div>
+    <div class="container-fluid">
+      <% (@users_places || []).each_with_index do |my_place, index| %>
+        <div class="card card-inverse col-sm-3">
+          <div class="card-block">
+            <h4 class="card-title">
+              <%= my_place.name %>
+            </h4>
+            <p class="card-text">
+              <%= my_place.address %>
+            </p>
+            <%= button_to "delete", users_place_path(my_place.id), :method => :delete, class: "btn btn-primary" %>
           </div>
-        <% end %>
-      </ul>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>

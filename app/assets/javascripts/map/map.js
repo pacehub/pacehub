@@ -11,7 +11,7 @@ function initMap() {
   var infoWindow = new google.maps.InfoWindow();
 
   // Set map over center of Singapore
-  map = new google.maps.Map(document.getElementById('map'), {
+  map = new google.maps.Map($('#map')[0], {
     center: sgCenter,
     zoom: minZoom,
     mapTypeControl: false,
@@ -34,9 +34,7 @@ function initMap() {
     }
   });
 
-  var input = (document.getElementById('pac-input'));
-
-  var autocomplete = new google.maps.places.Autocomplete(input);
+  var autocomplete = new google.maps.places.Autocomplete($('#pac-input')[0]);
 
   autocomplete.bindTo('bounds', map);
 

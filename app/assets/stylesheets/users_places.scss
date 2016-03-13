@@ -1,3 +1,24 @@
 // Place all the styles related to the users_places controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.card {
+  background-color: #222;
+  border: 2px solid #fff;
+  border-radius: 16px;
+  padding-bottom: 10px;
+}
+
+.card-title {
+  color: #fff;
+  height: 50px;
+  padding-top: 10px;
+  h4 {
+    vertical-align: middle;
+  }
+}
+
+.card-text {
+  color: #aaa;
+  height: 70px;
+}
