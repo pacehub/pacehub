@@ -15,12 +15,18 @@ module Api::V1
     def create
       @search = Place.find_by(latitude: place_params[:latitude], longitude: place_params[:longitude])
       @place = @search || Place.new(place_params)
-      @users_place = UsersPlace.new(user_id: current_user.id, place_id: @place.id) if @place.save
-      if @users_place.save
-        render json: @place
+
+      if @place.save
+        dup = UsersPlace.where(user: current_user, place: @place)
+
+        if dup.blank?
+          @users_place = UsersPlace.new(user_id: current_user.id, place_id: @place.id)
+          render json: @place, :status => HTTP_CODE_CREATED if @users_place.save
+        else
+          render json: { "error" => "Duplicate record", "record" => dup }, :status => HTTP_CODE_CONFLICT
+        end
       else
         render json: @place.errors.messages, :status => HTTP_CODE_BAD_REQUEST
-        render html: @place.errors.messages, :status => HTTP_CODE_BAD_REQUEST
       end
     end
 
