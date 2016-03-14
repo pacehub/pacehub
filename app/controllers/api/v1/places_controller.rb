@@ -20,7 +20,7 @@ module Api::V1
         dup = UsersPlace.where(user: current_user, place: @place)
 
         if dup.blank?
-          @users_place = UsersPlace.new(user_id: current_user.id, place_id: @place.id)
+          @users_place = UsersPlace.new(user_id: current_user.id, place_id: @place.id, name: @place.name)
           render json: @place, :status => HTTP_CODE_CREATED if @users_place.save
         else
           render json: { "error" => "Duplicate record", "record" => dup }, :status => HTTP_CODE_CONFLICT
