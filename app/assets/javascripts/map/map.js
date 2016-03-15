@@ -162,7 +162,7 @@ function initMap() {
   }
 
   // Set content and open infoWindow
-  function openInfoWindow(location) {
+  function openInfoWindow() {
     infoWindow.setContent('<div><strong>' + location['name'] + '</strong><br>' + location['address'] + '</div>');
     infoWindow.open(map, marker);
   };
