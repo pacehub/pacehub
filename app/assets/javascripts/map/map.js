@@ -84,7 +84,7 @@ function initMap() {
       longitude: place.geometry.location.lng()
     }
 
-    openInfoWindow(location);
+    openInfoWindow();
   });
 
   // Add to my places
@@ -141,8 +141,13 @@ function initMap() {
       if (data['status'] === "OK") {
         var address = getAddress(data['results'][0]['address_components']);
         // location = setLocation(address);
-        location = { name: address, address: address };
-        openInfoWindow(location);
+        location = {
+          name: address,
+          address: address,
+          latitude: latLng.lat(),
+          longitude: latLng.lng()
+        };
+        openInfoWindow();
       }
     });
   };
