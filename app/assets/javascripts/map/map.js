@@ -45,7 +45,7 @@ function initMap() {
   });
 
   autocomplete.addListener('place_changed', function() {
-    var address = [];
+    var address;
     infoWindow.close(); 
     marker.setVisible(false);
     place = autocomplete.getPlace();
@@ -65,7 +65,7 @@ function initMap() {
 
     marker.setIcon(({
       url: place.icon,
-      size: new google.maps.Size(71, 71),
+      size: new google.maps.Size(50, 50),
       origin: new google.maps.Point(0, 0),
       anchor: new google.maps.Point(17, 34),
       scaledSize: new google.maps.Size(35, 35)
@@ -74,23 +74,20 @@ function initMap() {
     map.setCenter(place.geometry.location);
     marker.setVisible(true);
 
-    _.each(place.address_components, function (component) {
-      if (component['types'][0] !== 'locality') {
-        address = address.concat(component.long_name);
-      }
-    });
+    address = getAddress(place.address_components);
 
+    // location = setLocation(address, place);
     location = {
-      address: address.join(' '),
+      address: address,
       name: place.name,
       latitude: place.geometry.location.lat(),
       longitude: place.geometry.location.lng()
     }
 
-    infoWindow.setContent('<div><strong>' + location['name'] + '</strong><br>' + location['address'] + '</div>');
-    infoWindow.open(map, marker);
+    openInfoWindow();
   });
 
+  // Add to my places
   $("#add_place").click(function (e) {
     place = {};
     if (!_.isEmpty(location)) {
@@ -113,6 +110,20 @@ function initMap() {
     }
   });
 
+  // whenever user clicks on a point in the map
+  google.maps.event.addListener(map, 'click', function (e) {
+    infoWindow.close();
+    marker.setVisible(false);
+    moveMarker(e.latLng);
+  });
+
+  // move marker to present location
+  function moveMarker(latLng) {
+    marker.setPosition(latLng);
+    showLocation(latLng);
+  }
+
+  // add new marker to my place
   function addMarker(place) {
     new google.maps.Marker({
       position: { lat: place['latitude'], lng: place['longitude'] },
@@ -120,4 +131,51 @@ function initMap() {
       title: place['address']
     });
   };
+
+  // display location information
+  function showLocation(latLng) {
+    var end_point = "https://maps.googleapis.com/maps/api/geocode/json?",
+        key = "AIzaSyC62LADU--Wasiae3_LGpkvaVIUlYfJ1EU",
+        latLngParams = latLng.lat() + "," + latLng.lng();
+    $.get(end_point + "key=" + key + "&latlng=" + latLngParams, function (data, status) {
+      if (data['status'] === "OK") {
+        var address = getAddress(data['results'][0]['address_components']);
+        // location = setLocation(address);
+        location = {
+          name: address,
+          address: address,
+          latitude: latLng.lat(),
+          longitude: latLng.lng()
+        };
+        openInfoWindow();
+      }
+    });
+  };
+
+  // get address string from components
+  function getAddress(components) {
+    return _.chain(components)
+      .filter(function (component) { return component['types'][0] !== 'locality' })
+      .pluck('long_name')
+      .value()
+      .join(' ');
+  }
+
+  // Set content and open infoWindow
+  function openInfoWindow(location) {
+    infoWindow.setContent('<div><strong>' + location['name'] + '</strong><br>' + location['address'] + '</div>');
+    infoWindow.open(map, marker);
+  };
+
+  // TODO
+  // Set location data
+  // function setLocation(address, place) {
+  //   console.log('setting location')
+  //   return {
+  //     address: address,
+  //     name: place.name,
+  //     latitude: place.geometry.location.lat(),
+  //     longitude: place.geometry.location.lng()
+  //   }
+  // };
 }
