@@ -47,7 +47,7 @@ function initMap() {
   autocomplete.addListener('place_changed', function() {
     var address;
     infoWindow.close(); 
-    marker.setVisible(false);
+
     place = autocomplete.getPlace();
 
     if (!place.geometry) {
@@ -63,16 +63,8 @@ function initMap() {
       map.setZoom(16);  // 16 cos that's my jersey number
     }
 
-    marker.setIcon(({
-      url: place.icon,
-      size: new google.maps.Size(50, 50),
-      origin: new google.maps.Point(0, 0),
-      anchor: new google.maps.Point(17, 34),
-      scaledSize: new google.maps.Size(35, 35)
-    }));
     marker.setPosition(place.geometry.location);
     map.setCenter(place.geometry.location);
-    marker.setVisible(true);
 
     address = getAddress(place.address_components);
 
@@ -89,7 +81,6 @@ function initMap() {
 
   // Add to my places
   $("#add_place").click(function (e) {
-    place = {};
     if (!_.isEmpty(location)) {
       e.preventDefault();
       $.ajax({
@@ -113,7 +104,6 @@ function initMap() {
   // whenever user clicks on a point in the map
   google.maps.event.addListener(map, 'click', function (e) {
     infoWindow.close();
-    marker.setVisible(false);
     moveMarker(e.latLng);
   });
 
