@@ -5,13 +5,15 @@
       <% (@users_places || []).each_with_index do |my_place, index| %>
         <div class="card card-inverse col-sm-3">
           <div class="card-block">
+          <%= button_to users_place_path(my_place.id), :method => :delete, class: "btn-transparent" do %>
+            <span class="glyphicon glyphicon-remove glyphicon-inverse"></span>
+          <% end %>
             <h4 class="card-title">
               <%= best_in_place my_place, :name %>
             </h4>
             <p class="card-text">
               <%= my_place.address %>
             </p>
-            <%= button_to "delete", users_place_path(my_place.id), :method => :delete, class: "btn btn-primary" %>
           </div>
         </div>
       <% end %>
