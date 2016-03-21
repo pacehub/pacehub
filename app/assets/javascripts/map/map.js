@@ -4,7 +4,10 @@ function initMap() {
       sgCenter = { lat: 1.360270, lng: 103.815959 },
       my_places = gon.my_places,
       place,
-      location = {};
+      location = {},
+      restrictions = {
+        componentRestrictions: {country: "sg"}
+      };
 
 
   // Location description
@@ -34,7 +37,7 @@ function initMap() {
     }
   });
 
-  var autocomplete = new google.maps.places.Autocomplete($('#pac-input')[0]);
+  var autocomplete = new google.maps.places.Autocomplete($('#pac-input')[0], restrictions);
 
   autocomplete.bindTo('bounds', map);
 
