@@ -13,7 +13,7 @@ module Api::V1
     end
 
     def create
-      @search = Place.find_by(latitude: place_params[:latitude], longitude: place_params[:longitude])
+      @search = Place.exist(place_params)
       @place = @search || Place.new(place_params)
 
       if @place.save

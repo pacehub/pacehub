@@ -75,8 +75,8 @@ function initMap() {
     location = {
       address: address,
       name: place.name,
-      latitude: place.geometry.location.lat(),
-      longitude: place.geometry.location.lng()
+      latitude: place.geometry.location.lat().toFixed(7),
+      longitude: place.geometry.location.lng().toFixed(7)
     }
 
     openInfoWindow();
@@ -119,7 +119,7 @@ function initMap() {
   // add new marker to my place
   function addMarker(place) {
     new google.maps.Marker({
-      position: { lat: place['latitude'], lng: place['longitude'] },
+      position: { lat: place['latitude'] * 1, lng: place['longitude'] * 1 },
       map: map,
       title: place['address']
     });
@@ -137,8 +137,8 @@ function initMap() {
         location = {
           name: address,
           address: address,
-          latitude: latLng.lat(),
-          longitude: latLng.lng()
+          latitude: latLng.lat().toFixed(7),
+          longitude: latLng.lng().toFixed(7)
         };
         openInfoWindow();
       }
