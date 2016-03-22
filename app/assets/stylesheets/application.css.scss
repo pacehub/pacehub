@@ -41,8 +41,8 @@ html, body {
   height: 100%;
 }
 
-.header {
-  height: 30px
+header {
+  height: 8%;
 }
 
 label {
@@ -59,6 +59,8 @@ input {
 .btn {
   text-align: center;
   width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #error_explanation {
