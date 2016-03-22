@@ -33,6 +33,14 @@ $gray-medium-light: #eaeaea;
   @include box_sizing;
 }
 
+html, body {
+  height: 100%;
+}
+
+.content {
+  height: 100%;
+}
+
 .header {
   height: 30px
 }

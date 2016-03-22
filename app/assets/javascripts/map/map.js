@@ -4,7 +4,7 @@ function initMap() {
       sgCenter = { lat: 1.360270, lng: 103.815959 },
       my_places = gon.my_places,
       place,
-      location = {},
+      LOCATION = {},
       restrictions = {
         componentRestrictions: {country: "sg"}
       };
@@ -23,7 +23,7 @@ function initMap() {
 
   // Add markers for all saved locations
   _.each(my_places, function (my_place) {
-    addMarker(my_place);
+    addMyMarker(my_place);
   });
 
   // Traffic layer over map
@@ -38,6 +38,7 @@ function initMap() {
   });
 
   var autocomplete = new google.maps.places.Autocomplete($('#pac-input')[0], restrictions);
+  var geocoder = new google.maps.Geocoder();
 
   autocomplete.bindTo('bounds', map);
 
@@ -48,7 +49,6 @@ function initMap() {
   });
 
   autocomplete.addListener('place_changed', function() {
-    var address;
     infoWindow.close(); 
 
     place = autocomplete.getPlace();
@@ -69,40 +69,37 @@ function initMap() {
     marker.setPosition(place.geometry.location);
     map.setCenter(place.geometry.location);
 
-    address = getAddress(place.address_components);
+    setLocation(place.name, place);
 
-    // location = setLocation(address, place);
-    location = {
-      address: address,
-      name: place.name,
-      latitude: place.geometry.location.lat().toFixed(7),
-      longitude: place.geometry.location.lng().toFixed(7)
-    }
-
-    openInfoWindow();
+    openInfoWindow(marker);
   });
 
-  // Add to my places
-  $("#add_place").click(function (e) {
-    if (!_.isEmpty(location)) {
-      e.preventDefault();
-      $.ajax({
-        type: "POST",
-        contentType: "application/json; charset=utf-8",
-        url: "/api/add_places",
-        data: JSON.stringify({
-          address: location['address'],
-          name: location['name'],
-          latitude: location['latitude'],
-          longitude: location['longitude']
-        }),
-        dataType: "json",
-        success: function (result) {
-          addMarker(result);
-        }
-      });
-    }
-  });
+  function addPlaceButton () {
+    var btn = $('<div class="col-sm-2 add-place-btn"><form class="btn btn-warning">Add this place</form></div>');
+    btn.bind('click', function (e) {
+      if (!_.isEmpty(LOCATION)) {
+        e.preventDefault();
+        $.ajax({
+          type: "POST",
+          contentType: "application/json; charset=utf-8",
+          url: "/api/add_places",
+          data: JSON.stringify({
+            address: LOCATION['address'],
+            name: LOCATION['name'],
+            latitude: LOCATION['latitude'],
+            longitude: LOCATION['longitude']
+          }),
+          dataType: "json",
+          success: function (result) {
+            addMyMarker(result);
+          }
+        });
+      }
+    });
+    return btn[0];
+  };
+
+  map.controls[google.maps.ControlPosition.TOP_RIGHT].push(addPlaceButton());
 
   // whenever user clicks on a point in the map
   google.maps.event.addListener(map, 'click', function (e) {
@@ -117,30 +114,39 @@ function initMap() {
   }
 
   // add new marker to my place
-  function addMarker(place) {
-    new google.maps.Marker({
+  function addMyMarker(place) {
+    var _marker = new google.maps.Marker({
       position: { lat: place['latitude'] * 1, lng: place['longitude'] * 1 },
       map: map,
-      title: place['address']
+      title: place['name']
+    });
+    _marker.addListener('click', function () {
+      geocodeLocation(_marker.getPosition(), function (result) {
+        if (result) {
+          setLocation(_marker.getTitle(), result)
+          openInfoWindow(_marker);
+        }
+      });
     });
   };
 
   // display location information
   function showLocation(latLng) {
-    var end_point = "https://maps.googleapis.com/maps/api/geocode/json?",
-        key = "AIzaSyC62LADU--Wasiae3_LGpkvaVIUlYfJ1EU",
-        latLngParams = latLng.lat() + "," + latLng.lng();
-    $.get(end_point + "key=" + key + "&latlng=" + latLngParams, function (data, status) {
-      if (data['status'] === "OK") {
-        var address = getAddress(data['results'][0]['address_components']);
-        // location = setLocation(address);
-        location = {
-          name: address,
-          address: address,
-          latitude: latLng.lat().toFixed(7),
-          longitude: latLng.lng().toFixed(7)
-        };
-        openInfoWindow();
+    geocodeLocation(latLng, function (result) {
+      if (result) {
+        setLocation(result['formatted_address'], result)
+        openInfoWindow(marker);
+      }
+    });
+  };
+
+  function geocodeLocation(latLng, callback) {
+    geocoder.geocode({ location: latLng }, function (results, status) {
+      if (status === "OK") {
+        callback(results[0]);
+      } else {
+        alert("Unable to get location detail: " + status + "\nPlease try again");
+        callback();
       }
     });
   };
@@ -148,27 +154,29 @@ function initMap() {
   // get address string from components
   function getAddress(components) {
     return _.chain(components)
-      .filter(function (component) { return component['types'][0] !== 'locality' })
-      .pluck('long_name')
-      .value()
-      .join(' ');
+            .filter(function (component) { return component['types'][0] !== 'locality' })
+            .pluck('long_name')
+            .value()
+            .join(' ');
   }
 
   // Set content and open infoWindow
-  function openInfoWindow() {
-    infoWindow.setContent('<div><strong>' + location['name'] + '</strong><br>' + location['address'] + '</div>');
-    infoWindow.open(map, marker);
+  function openInfoWindow(marker) {
+    var _marker = marker,
+        content = '<div><strong>' + LOCATION['name'] + '</strong><br>' + LOCATION['address'] + '</div>',
+        originButton = '<div class="col-sm-6" id="btn-origin"><form class="btn btn-primary">Start</form></div>',
+        destinationButton = '<div class="col-sm-6" id="btn-destination"><form class="btn btn-success">End</form></div>';
+    infoWindow.setContent(content + originButton + destinationButton);
+    infoWindow.open(map, _marker);
   };
 
-  // TODO
   // Set location data
-  // function setLocation(address, place) {
-  //   console.log('setting location')
-  //   return {
-  //     address: address,
-  //     name: place.name,
-  //     latitude: place.geometry.location.lat(),
-  //     longitude: place.geometry.location.lng()
-  //   }
-  // };
+  function setLocation(name, place) {
+    LOCATION = {
+      name: name,
+      address: getAddress(place['address_components']),
+      latitude: place.geometry.location.lat().toFixed(7),
+      longitude: place.geometry.location.lng().toFixed(7)
+    }
+  };
 }
