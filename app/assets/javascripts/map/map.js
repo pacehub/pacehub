@@ -63,12 +63,12 @@ function initMap() {
   };
 
   $('#origin').click(function () {
-    origin = {lat: LOCATION['latitude'], lng: LOCATION['longitude']}
+    origin = {latitude: LOCATION['latitude'], longitude: LOCATION['longitude']}
     console.log(origin)
   });
 
   $('#destination').click(function () {
-    destination = {lat: LOCATION['latitude'], lng: LOCATION['longitude']}
+    destination = {latitude: LOCATION['latitude'], longitude: LOCATION['longitude']}
     console.log(destination)
   });
 
