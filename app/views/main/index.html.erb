@@ -8,10 +8,29 @@
   <div class="row">
     <% if logged_in? %>
       <div class="col-sm-6 col-sm-offset-2">
-        <input id="pac-input" class="controls form-control" type="text" placeholder="Enter a location">
+        <div class="row">
+          <div class="col-sm-8">
+            <input id="pac-input" class="controls form-control" type="text" placeholder="Enter a location">
+          </div>
+          <div class="col-sm-4">
+            <form action="" class="button_to btn btn-primary" id="origin">
+              Start
+            </form>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-8">
+            <input id="pac-input-destination" class="controls form-control" type="text" placeholder="Enter a location">
+          </div>
+          <div class="col-sm-4">
+            <form action="" class="button_to btn btn-success" id="destination">
+              End
+            </form>
+          </div>
+        </div>
       </div>
-      <div class="col-sm-2" id="start-trip">
-        <form class="button_to btn btn-danger">
+      <div class="col-sm-2">
+        <form class="button_to btn btn-danger" id="start-trip">
           GO MUTHERFUCKA!!!
         </form>
       </div>

@@ -17,6 +17,7 @@ Rails.application.routes.draw do
 
   scope :api, module: "api/v1", defaults: { format: :json } do
     post 'add_places' => 'places#create'
+    post 'get_directions' => 'directions#create'
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

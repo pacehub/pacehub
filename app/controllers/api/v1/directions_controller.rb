@@ -3,7 +3,7 @@ module Api::V1
   class DirectionsController < ApiController
 
     def create
-      @direction = Direction.get_directions(params[:origin], params[:destination], Time.now)
+      @direction = Direction.get_directions(direction_params[:origin], direction_params[:destination], Time.now)
       if @direction.code == '200'
         @direction.save
         render json: @direction, :status => HTTP_CODE_CREATED
@@ -14,8 +14,8 @@ module Api::V1
 
     private
     # whitelist parameters
-    def place_params
-      params.require(:directions).permit(:origin, :destination)
+    def direction_params
+      params.permit(:origin, :destination)
     end
   end
 end

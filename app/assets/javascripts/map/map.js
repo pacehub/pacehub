@@ -5,7 +5,9 @@ function initMap() {
       LOCATION = {},
       restrictions = {
         componentRestrictions: { country: "sg" }
-      };
+      },
+      origin = {},
+      destination = {};
 
   var infoWindow = new google.maps.InfoWindow();
   var geocoder = new google.maps.Geocoder();
@@ -59,6 +61,35 @@ function initMap() {
     });
     return btn[0];
   };
+
+  $('#origin').click(function () {
+    origin = {lat: LOCATION['latitude'], lng: LOCATION['longitude']}
+    console.log(origin)
+  });
+
+  $('#destination').click(function () {
+    destination = {lat: LOCATION['latitude'], lng: LOCATION['longitude']}
+    console.log(destination)
+  });
+
+  $('#start-trip').click(function () {
+    if (_.isEmpty(origin)) {
+      alert("Please specify starting point");
+    } else if (_.isEmpty(destination)) {
+      alert("Please specify ending point");
+    } else {
+      $.ajax({
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        url: "/api/get_directions",
+        data: JSON.stringify({origin, destination}),
+        dataType: "json",
+        success: function (result) {
+          console.log(result);
+        }
+      });
+    }
+  });
 
   map.controls[google.maps.ControlPosition.TOP_RIGHT].push(addPlaceButton());
 
@@ -136,7 +167,6 @@ function initMap() {
     });
   };
 
-  // get address string from components
   function formAddress(components) {
     return _.chain(components)
             .filter(function (component) { return component['types'][0] !== 'locality' })
@@ -147,10 +177,8 @@ function initMap() {
 
   function openInfoWindow(marker) {
     var _marker = marker,
-        content = '<div><strong>' + LOCATION['name'] + '</strong><br>' + LOCATION['address'] + '</div>',
-        originButton = '<div class="col-sm-6" id="btn-origin"><form class="btn btn-primary">Start</form></div>',
-        destinationButton = '<div class="col-sm-6" id="btn-destination"><form class="btn btn-success">End</form></div>';
-    infoWindow.setContent(content + originButton + destinationButton);
+        content = '<div><strong>' + LOCATION['name'] + '</strong><br>' + LOCATION['address'] + '</div>';
+    infoWindow.setContent(content);
     infoWindow.open(map, _marker);
   };
 
