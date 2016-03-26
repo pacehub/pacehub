@@ -85,6 +85,7 @@ function initMap() {
         data: JSON.stringify({origin, destination}),
         dataType: "json",
         success: function (result) {
+          console.log('success!')
           console.log(result);
         }
       });
