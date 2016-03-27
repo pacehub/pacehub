@@ -4,7 +4,7 @@
     <title>Pacehub</title>
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
-    <%= csrf_meta_tags %>\
+    <%= csrf_meta_tags %>
     <%= include_gon %>
     <%= yield(:additional_head) %>
   </head>
@@ -15,8 +15,8 @@
       </nav>
     </header>
 
-    <div class="container-fluid">
-      <div class="row center jumbotron">
+    <div class="container-fluid content jumbotron">
+      <div class="row center">
         <% if flash.present? %>
           <div class="row">
             <% flash.each do |message_type, message| %>

@@ -1,31 +1,39 @@
 function initMap() {
   var minZoom = 12,
-      map,
       sgCenter = { lat: 1.360270, lng: 103.815959 },
-      my_places = gon.my_places,
-      place,
-      location = {};
+      myPlaces = gon.my_places,
+      LOCATION = {},
+      restrictions = {
+        componentRestrictions: { country: "sg" }
+      },
+      origin = {},
+      destination = {};
 
-
-  // Location description
   var infoWindow = new google.maps.InfoWindow();
+  var geocoder = new google.maps.Geocoder();
 
   // Set map over center of Singapore
-  map = new google.maps.Map($('#map')[0], {
+  var map = new google.maps.Map($('#map')[0], {
     center: sgCenter,
     zoom: minZoom,
     mapTypeControl: false,
     streetViewControl: false
   });
 
-  // Add markers for all saved locations
-  _.each(my_places, function (my_place) {
-    addMarker(my_place);
-  });
-
   // Traffic layer over map
   var trafficLayer = new google.maps.TrafficLayer();
   trafficLayer.setMap(map);
+
+  // Marker to be assigned
+  var marker = new google.maps.Marker({
+    map: map,
+    anchorpoint: new google.maps.Point(0, -29)
+  });
+
+  // Add markers for all saved locations
+  _.each(myPlaces, function (myPlace) {
+    addMyMarker(myPlace);
+  });
 
   // Limit zoom on map view
   google.maps.event.addListener(map, 'zoom_changed', function () {
@@ -34,138 +42,153 @@ function initMap() {
     }
   });
 
-  var autocomplete = new google.maps.places.Autocomplete($('#pac-input')[0]);
+  function addPlaceButton () {
+    var btn = $('<div class="col-sm-2 add-place-btn"><form class="btn btn-warning">Add this place</form></div>');
+    btn.bind('click', function (e) {
+      if (!_.isEmpty(LOCATION)) {
+        e.preventDefault();
+        $.ajax({
+          type: "POST",
+          contentType: "application/json; charset=utf-8",
+          url: "/api/add_places",
+          data: JSON.stringify(LOCATION),
+          dataType: "json",
+          success: function (result) {
+            addMyMarker(result);
+          }
+        });
+      }
+    });
+    return btn[0];
+  };
 
-  autocomplete.bindTo('bounds', map);
-
-  // Marker to be assigned
-  var marker = new google.maps.Marker({
-    map: map,
-    anchorpoint: new google.maps.Point(0, -29)
+  $('#origin').click(function () {
+    origin = {latitude: LOCATION['latitude'], longitude: LOCATION['longitude']}
+    console.log(origin)
   });
 
-  autocomplete.addListener('place_changed', function() {
-    var address;
-    infoWindow.close(); 
+  $('#destination').click(function () {
+    destination = {latitude: LOCATION['latitude'], longitude: LOCATION['longitude']}
+    console.log(destination)
+  });
 
-    place = autocomplete.getPlace();
-
-    if (!place.geometry) {
-      window.alert("Autocomplete's returned place contains no geometry");
-      return;
-    }
-
-    // If the place has a geometry, then present it on a map.
-    if (place.geometry.viewport) {
-      map.fitBounds(place.geometry.viewport);
+  $('#start-trip').click(function () {
+    if (_.isEmpty(origin)) {
+      alert("Please specify starting point");
+    } else if (_.isEmpty(destination)) {
+      alert("Please specify ending point");
     } else {
-      map.setCenter(place.geometry.location);
-      map.setZoom(16);  // 16 cos that's my jersey number
-    }
-
-    marker.setPosition(place.geometry.location);
-    map.setCenter(place.geometry.location);
-
-    address = getAddress(place.address_components);
-
-    // location = setLocation(address, place);
-    location = {
-      address: address,
-      name: place.name,
-      latitude: place.geometry.location.lat(),
-      longitude: place.geometry.location.lng()
-    }
-
-    openInfoWindow();
-  });
-
-  // Add to my places
-  $("#add_place").click(function (e) {
-    if (!_.isEmpty(location)) {
-      e.preventDefault();
       $.ajax({
         type: "POST",
         contentType: "application/json; charset=utf-8",
-        url: "/api/add_places",
-        data: JSON.stringify({
-          address: location['address'],
-          name: location['name'],
-          latitude: location['latitude'],
-          longitude: location['longitude']
-        }),
+        url: "/api/get_directions",
+        data: JSON.stringify({origin, destination}),
         dataType: "json",
         success: function (result) {
-          addMarker(result);
+          var duration = (Date.parse(result['end_time']) - Date.parse(result['start_time']))/60000
+          console.log('it will take you ' + duration.toFixed(0) + ' minutes')
         }
       });
     }
   });
 
-  // whenever user clicks on a point in the map
-  google.maps.event.addListener(map, 'click', function (e) {
+  map.controls[google.maps.ControlPosition.TOP_RIGHT].push(addPlaceButton());
+
+  var autocomplete = new google.maps.places.Autocomplete($('#pac-input')[0], restrictions);
+  autocomplete.bindTo('bounds', map);
+
+  autocomplete.addListener('place_changed', function() {
     infoWindow.close();
-    moveMarker(e.latLng);
+
+    var _place = autocomplete.getPlace();
+
+    if (!_place.geometry) {
+      window.alert("Autocomplete's returned place contains no geometry");
+      return;
+    }
+
+    // If the place has a geometry, then present it on a map.
+    if (_place.geometry.viewport) {
+      map.fitBounds(_place.geometry.viewport);
+    } else {
+      map.setCenter(_place.geometry.location);
+      map.setZoom(16);  // 16 cos jersey number
+    }
+
+    marker.setPosition(_place.geometry.location);
+    map.setCenter(_place.geometry.location);
+
+    setLocationData(_place.name, _place);
+    openInfoWindow(marker);
   });
 
-  // move marker to present location
-  function moveMarker(latLng) {
+  google.maps.event.addListener(map, 'click', function (e) {
+    infoWindow.close();
+    setMarker(e.latLng);
+    showLocation(e.latLng);
+  });
+
+  function setMarker(latLng) {
     marker.setPosition(latLng);
-    showLocation(latLng);
   }
 
-  // add new marker to my place
-  function addMarker(place) {
-    new google.maps.Marker({
-      position: { lat: place['latitude'], lng: place['longitude'] },
+  function addMyMarker(place) {
+    var _marker = new google.maps.Marker({
+      position: { lat: place['latitude'] * 1, lng: place['longitude'] * 1 },
       map: map,
-      title: place['address']
+      title: place['name']
+    });
+    _marker.addListener('click', function () {
+      geocodeLocation(_marker.getPosition(), function (result) {
+        if (result) {
+          setLocationData(_marker.getTitle(), result)
+          openInfoWindow(_marker);
+        }
+      });
     });
   };
 
-  // display location information
   function showLocation(latLng) {
-    var end_point = "https://maps.googleapis.com/maps/api/geocode/json?",
-        key = "AIzaSyC62LADU--Wasiae3_LGpkvaVIUlYfJ1EU",
-        latLngParams = latLng.lat() + "," + latLng.lng();
-    $.get(end_point + "key=" + key + "&latlng=" + latLngParams, function (data, status) {
-      if (data['status'] === "OK") {
-        var address = getAddress(data['results'][0]['address_components']);
-        // location = setLocation(address);
-        location = {
-          name: address,
-          address: address,
-          latitude: latLng.lat(),
-          longitude: latLng.lng()
-        };
-        openInfoWindow();
+    geocodeLocation(latLng, function (result) {
+      if (result) {
+        setLocationData(result['formatted_address'], result)
+        openInfoWindow(marker);
       }
     });
   };
 
-  // get address string from components
-  function getAddress(components) {
-    return _.chain(components)
-      .filter(function (component) { return component['types'][0] !== 'locality' })
-      .pluck('long_name')
-      .value()
-      .join(' ');
-  }
-
-  // Set content and open infoWindow
-  function openInfoWindow() {
-    infoWindow.setContent('<div><strong>' + location['name'] + '</strong><br>' + location['address'] + '</div>');
-    infoWindow.open(map, marker);
+  function geocodeLocation(latLng, callback) {
+    geocoder.geocode({ location: latLng }, function (results, status) {
+      if (status === "OK") {
+        callback(results[0]);
+      } else {
+        alert("Unable to get location detail: " + status + "\nPlease try again");
+        callback();
+      }
+    });
   };
 
-  // TODO
-  // Set location data
-  // function setLocation(address, place) {
-  //   console.log('setting location')
-  //   return {
-  //     address: address,
-  //     name: place.name,
-  //     latitude: place.geometry.location.lat(),
-  //     longitude: place.geometry.location.lng()
-  //   }
-  // };
+  function formAddress(components) {
+    return _.chain(components)
+            .filter(function (component) { return component['types'][0] !== 'locality' })
+            .pluck('long_name')
+            .value()
+            .join(' ');
+  }
+
+  function openInfoWindow(marker) {
+    var _marker = marker,
+        content = '<div><strong>' + LOCATION['name'] + '</strong><br>' + LOCATION['address'] + '</div>';
+    infoWindow.setContent(content);
+    infoWindow.open(map, _marker);
+  };
+
+  function setLocationData(name, place) {
+    LOCATION = {
+      name: name,
+      address: formAddress(place['address_components']),
+      latitude: place.geometry.location.lat().toFixed(7),
+      longitude: place.geometry.location.lng().toFixed(7)
+    }
+  };
 }

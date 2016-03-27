@@ -33,8 +33,20 @@ $gray-medium-light: #eaeaea;
   @include box_sizing;
 }
 
-.header {
-  height: 30px
+html, body {
+  height: 100%;
+}
+
+.content {
+  height: 100%;
+}
+
+header {
+  height: 6%;
+}
+
+.navbar {
+  height: 6%;
 }
 
 label {
@@ -51,6 +63,8 @@ input {
 .btn {
   text-align: center;
   width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #error_explanation {
