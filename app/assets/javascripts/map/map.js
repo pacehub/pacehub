@@ -85,8 +85,8 @@ function initMap() {
         data: JSON.stringify({origin, destination}),
         dataType: "json",
         success: function (result) {
-          console.log('success!')
-          console.log(result);
+          var duration = (Date.parse(result['end_time']) - Date.parse(result['start_time']))/60000
+          console.log('it will take you ' + duration.toFixed(0) + ' minutes')
         }
       });
     }
