@@ -1,7 +1,10 @@
 <div class="container-fluid">
   <nav>
-    <ul class="nav navbar-nav navbar-right">
-      <li><%= link_to "Home", root_path %></li>
+    <span class="home-page-logo" style="vertical-align:middle">
+      <%= image_tag "Pace_logo_long"%>
+    </span>
+   <ul class="nav navbar-nav navbar-right">
+      <li><%= link_to "HOME", root_path %></li>
       <% if logged_in? %>
         <li><%= link_to "Users", '#' %></li>
         <li class="dropdown">
@@ -19,7 +22,7 @@
           </ul>
         </li>
       <% else %>
-        <li><%= link_to "Log in", login_path %></li>
+        <li><%= link_to "LOG IN", login_path %></li>
       <% end %>
     </ul>
   </nav>

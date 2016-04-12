@@ -15,7 +15,7 @@
 
 @import "bootstrap-sprockets";
 @import "bootstrap";
-
+@import url(https://fonts.googleapis.com/css?family=Muli);
 $gray-medium-light: #eaeaea;
 
 @mixin box_sizing {
@@ -46,7 +46,9 @@ header {
 }
 
 .navbar {
-  height: 6%;
+  height: 54px;
+  background-color: #e46250;
+  border: none;
 }
 
 label {
@@ -95,4 +97,31 @@ input {
 
 .jumbotron p {
   font-size: 16px;
+}
+
+.home-page-logo img {
+  width: auto;
+  height: 26px;
+  margin-left: 120px;
+  vertical-align: middle;
+  margin-top: 15px;
+}
+
+.navbar-inverse .navbar-nav > li >a {
+  color: white;
+  font-family: 'Muli', sans-serif;
+}
+
+.navbar-inverse .navbar-nav > li >a:hover {
+  border-bottom-style: solid;
+  border-bottom-width: 3px;
+}
+
+.navbar-nav > li > a {
+    padding-top: 15px;
+    padding-bottom: 0px;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-right: 10px;
+    margin-left: 10px;
 }
