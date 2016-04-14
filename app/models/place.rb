@@ -7,6 +7,8 @@ class Place < ActiveRecord::Base
 
   validates_presence_of :latitude, :longitude, :address, :name
 
+  enum place_type: { general: 0, train_station: 1 }
+
   def self.exist(place)
     existing_place = Place.find_by(latitude: place[:latitude], longitude: place[:longitude])
     existing_place

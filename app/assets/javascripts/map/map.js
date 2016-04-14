@@ -30,6 +30,11 @@ function initMap() {
     anchorpoint: new google.maps.Point(0, -29)
   });
 
+  var image = {
+    url: "https://cdn3.iconfinder.com/data/icons/map/500/communication-512.png",
+    scaledSize: new google.maps.Size(30, 30)
+  }
+
   // Add markers for all saved locations
   _.each(myPlaces, function (myPlace) {
     addMyMarker(myPlace);
@@ -136,7 +141,8 @@ function initMap() {
     var _marker = new google.maps.Marker({
       position: { lat: place['latitude'] * 1, lng: place['longitude'] * 1 },
       map: map,
-      title: place['name']
+      title: place['name'],
+      icon: image
     });
     _marker.addListener('click', function () {
       geocodeLocation(_marker.getPosition(), function (result) {
